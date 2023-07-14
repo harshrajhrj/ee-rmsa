@@ -117,19 +117,17 @@ for one_request_str in request_list_str:
 
     # BLOCKING REQUEST WHICH ARE BEYOND OPTICAL REACH EVEN AFTER REGENERATING.
     # ALSO BLOCKED IF REGENERATION RESOURCES ARE ALL USED UP FOR THE REGENERATING NODE.
-    # returns path_dist, paths
     blocked_or_new_tree = rb.check_optical_reach_blocking(
         paths_dist, paths, regeneration_nodes, regeneration_resources, adj_matrix)
 
-    # BLOCKED REQUEST GETS FILTERED // Regeneration resouce unavailability or regeneration not not available 
+    # BLOCKED REQUEST GETS FILTERED
     if blocked_or_new_tree is True:
         print("The request is blocked")
         num_blocked_request += 1
 
     else:  # GRANTING REQUESTS:
+        regeneration_resources = blocked_or_new_tree[2]
         print("after updation of regen node: ", blocked_or_new_tree)
-
-        regeneration_resources = blocked_or_new_tree[2] #Remaining regeneration resources in each regenerating node
 
         # FINDING NO. OF SLOTS REQUIRED AS PER THE BANDWIDTH OF THE REQUEST AND DIST OF EACH S.TREE PATH
         slots_required = fs.noOfSlots(new_request[2], blocked_or_new_tree[0])
