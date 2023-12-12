@@ -2,7 +2,7 @@
 
 from math import floor
 
-NUMOFSLOTS=300
+NUMOFSLOTS=2000
 
 
 def slotsEnergyBVT(slots,dist_arr):
@@ -11,16 +11,16 @@ def slotsEnergyBVT(slots,dist_arr):
         dist=dist_arr[i]
 
         sm=0
-        if(4800<dist<=9600):
+        if(2000<dist<=4000):
             #BPSK
             sm=12.5
-        elif 2400<dist<=4800 :
+        elif 1000<dist<=2000 :
             #QPSK
             sm=25
-        elif 1200<dist<=2400 :
+        elif 500<dist<=1000 :
             #8QAM
             sm=37.5
-        elif 0<dist<=1200:
+        elif 0<dist<=500:
             sm=50
         
         

@@ -7,13 +7,13 @@ def noOfSlots(bandwidth,dist_array):
     for dist in dist_array:
         path_slot=0
         mf=0
-        if(4800<dist<=9600):
+        if(2000<dist<=4000):
             mf=1
-        elif 2400<dist<=4800 :
+        elif 1000<dist<=2000 :
             mf=2
-        elif 1200<dist<=2400 :
+        elif 500<dist<=1000 :
             mf=3
-        elif 0<dist<=1200: 
+        elif 0<dist<=500: 
             mf=4
         path_slot=ceil(bandwidth/(12.5*mf))+guard
         slots_arr.append(path_slot)

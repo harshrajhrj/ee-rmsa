@@ -2,17 +2,19 @@ import steinerTree_creation as st
 import request_blocking as rb
 import findinNoOfSlot as fs
 import energy_calculation as ec
+import generating_request_file as gr
+import ast
 
 
 # constans used : 1.NUMOFSLOT=300 #number of slots in each link [present in energy_calculation.py]
-# 2.OPTICAL_REACH=3000 # max Optical reach should IS 3600 [present in request_blocking.py]
+# 2.OPTICAL_REACH=4000 [present in request_blocking.py]
 # 3.REGENRESOURCESAVAILABLE=100 [present in request_blocking.py]
 
 #############################################################################################
 # i) Open the file containing the adjacency matrix
 
-import ast
-with open('adjmat_USA.txt', 'r', encoding='utf-8') as f:
+
+with open('./NETWORKS/adjmat_1.txt', 'r', encoding='utf-8') as f: #'./NETWORKS/adjmat_1.txt'
     contents = f.read()
 
 rows = contents.split('\n')
@@ -22,20 +24,21 @@ adj_matrix = []
 # Loop through each row of the matrix
 for row in rows:
     # processing the data
-    row = row.rstrip()
-    values = row.split(' ')
+    
+    values = row.split(', ')
 
     # Convert the values to integers
-    values = [int(val) for val in values]
+    values = [int(val) for val in values if val.strip()]
 
     # Add the row to the adjacency matrix
     adj_matrix.append(values)
 
-print("Adj matrix is ready......")
-# print(adj_matrix)
+print("\n\n\033[33m---: PRE-REQUISITES :---\033[0m")
+print("Adjacency matrix of the Network is ready.")
+#print(adj_matrix)
 
 #############################################################################################
-# degree of each node in the graph
+# degree of each node in the graph used for calculation of energy oxc
 
 
 def find_weighted_degrees(graph):
@@ -46,7 +49,7 @@ def find_weighted_degrees(graph):
         degree = 0
         for j in range(n):
             if graph[i][j] != 0:
-                degree += graph[i][j]
+                degree += 1
         degrees[i] = degree
 
     return degrees
@@ -70,12 +73,14 @@ def create_slot_of_links(matrix):
 
 
 slotsLink = create_slot_of_links(adj_matrix)
-print(slotsLink)
+print("Each link has",ec.NUMOFSLOTS,"slots")
 
 #############################################################################################
 # finding regeneration nodes
-regeneration_nodes = rb.highest_degree_regennodes(adj_matrix)
-print("regeneration_nodes:", regeneration_nodes)
+print("Each Regenerating node has",rb.REGENRESOURCESAVAILABLE,"resources.")
+print("Optical Reach: ",rb.OPTICAL_REACH)
+regeneration_nodes =list(range(1, len(adj_matrix) + 1))
+print("Regeneration nodes are:", regeneration_nodes)
 
 #############################################################################################
 # availability of regeneration recources for each regeneration nodes.
@@ -86,11 +91,15 @@ print("Available regeneration resources for each regen node: ",
 
 
 #############################################################################################
+# Generating request.txt
+#gr.requestGen(len(adj_matrix),100)
+
+#############################################################################################
 
 # reading request from request.txt file
 
 # total request=100
-with open('requests.txt', 'r', encoding='utf-8') as file:
+with open('requests.txt', 'r', encoding='utf-8') as file: #'requests.txt'
     request_str = file.read().rstrip()
 
 request_list_str = request_str.split('\n')
@@ -103,23 +112,30 @@ blocked_for_slot = 0
 num_running_request = 0
 tot_energy = 0
 
+print("\n\033[35m############################################################################################################################...\033[0m")
+
+print("\n\n\033[33m----: DYNAMIC REQUESTS ARE SESRVED AS FOLLOWS :----\033[0m\n\n")
 
 for one_request_str in request_list_str:
 
     # READING REQUEST
     # Convert the string to a list using ast.literal_eval()
     new_request = ast.literal_eval(one_request_str)
-    print("request:", new_request)
+    print("\033[36mRequest:", new_request,"\033[0m")
 
     # CREATION OF STEINER TREE
     paths_dist, paths, steiner_tree = st.sTree(adj_matrix, new_request)
-    print(paths_dist, paths, steiner_tree)
+    print("\n\033[32mCREATING STEINER TREE...\033[0m")
+    print("All the segment present in the Tree: ",paths)
+    print("Total Distance of each respective segments: ",paths_dist)
+    print("The Steiner Tree: ", steiner_tree)
 
+    print("\n\033[32mCHECKING FOR REGENERATION:---\033[0m")
     # BLOCKING REQUEST WHICH ARE BEYOND OPTICAL REACH EVEN AFTER REGENERATING.
     # ALSO BLOCKED IF REGENERATION RESOURCES ARE ALL USED UP FOR THE REGENERATING NODE.
     # returns path_dist, paths
     blocked_or_new_tree = rb.check_optical_reach_blocking(
-        paths_dist, paths, regeneration_nodes, regeneration_resources, adj_matrix)
+        paths_dist, paths, regeneration_resources, adj_matrix)
 
     # BLOCKED REQUEST GETS FILTERED // Regeneration resouce unavailability or regeneration not not available 
     if blocked_or_new_tree is True:
@@ -127,13 +143,19 @@ for one_request_str in request_list_str:
         num_blocked_request += 1
 
     else:  # GRANTING REQUESTS:
-        print("after updation of regen node: ", blocked_or_new_tree)
+
+        #print("after updation of regen node: ", blocked_or_new_tree)
+        print("All the segment present in the Tree after Regeneration: ",blocked_or_new_tree[1])
+        print("Total Distance of each respective segments: ",blocked_or_new_tree[0])
+        print("Regeneration happened at nodes: ",blocked_or_new_tree[3])
+
 
         regeneration_resources = blocked_or_new_tree[2] #Remaining regeneration resources in each regenerating node
 
         # FINDING NO. OF SLOTS REQUIRED AS PER THE BANDWIDTH OF THE REQUEST AND DIST OF EACH S.TREE PATH
         slots_required = fs.noOfSlots(new_request[2], blocked_or_new_tree[0])
         print("No. of slots required for each path: ", slots_required)
+        
 
         # ASSIGN THE REQUIRED SLOTS IF AVAILABLE OR BLOCK REQUEST
         psudoSlotsLink = fs.assignSlots(
@@ -157,23 +179,29 @@ for one_request_str in request_list_str:
             tot_energy += energy_opticalAmp
             tot_energy += energy_oxc
         else:
-            print("request is blocked due to inavailability of slots")
+            print("Request is blocked due to inavailability of slots")
             num_blocked_request += 1
             blocked_for_slot += 1
     print("\n\n")
 
 # ANALYSIS PART 1
-print("Total Blocked: Number of blocked request due to exceeding optical reach and cant be fixed by regeneration or inavailability of slots: ", num_blocked_request)
+
+print("\033[33m----:ALL THE REQUESTS ARE PROCESSED SUCCESSFULLY:----\033[0m\n\n")
+
+
+print("\033[35m############################################################################################################################...\033[0m")
+print("\n\033[33m----:ANALYSIS:----\033[0m\n")
+print("Total Blocked: Number of blocked request inavailability of slots: ", num_blocked_request)
 print("Number of request blocked due to exceeding optical reach: ",
       num_blocked_request-blocked_for_slot)
 print("Blocked due to unavailability of slots in link: ", blocked_for_slot)
 print("Number of running request : ", num_running_request)
+print("Total number of Regeneration Happened = ",len(adj_matrix)*rb.REGENRESOURCESAVAILABLE - sum(regeneration_resources.values()))
 
 
 print("After serving all the request the number of regeneration resources for each regeneration nodes: ", regeneration_resources)
 
 
-#############################################################################################
 #############################################################################################
 
 # ANALYSIS PART 2:
@@ -183,8 +211,13 @@ print(
     "Total energy for processing 100 requests [1.BVT, 2. Optical Amplifier, 3.OXV]:", tot_energy, "W")
 
 # total slots required:=
+total_slots_used = sum(sum(lst) for lst in slotsLink.values())
 print("total slots required for processing ", num_running_request,
-      " requests: ", sum(sum(lst) for lst in slotsLink.values()))
+      " requests: ", total_slots_used)
+
+print("Spectrum Efficiency :: (total frequency slot used / total number of request served) = ", total_slots_used/num_running_request)
+
+#bandwidth_blocking_ratio=
 
 # max regeneration at which node:=
 max_regen_node = min(regeneration_resources, key=regeneration_resources.get)

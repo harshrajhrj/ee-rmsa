@@ -3,15 +3,16 @@
 import random
 # f = open("request.txt","w",encoding='utf-8')
 
+def requestGen(node,number_of_req):
+    
+    list_of_nodes = set(range(1, node))
 
-request = []
-list_of_nodes = set(range(1, 25))
+    with open("requests.txt", "w", encoding='utf-8') as f:
 
-with open("requests.txt", "w", encoding='utf-8') as f:
+        for _ in range(number_of_req):
+            # Generate a list of 5 random integers between 1 and 24 (inclusive)
+            source = random.randint(1, node)
+            destination = random.sample(list_of_nodes - {source}, 5)
+            bwd = random.randint(1, 4)*40
+            f.write(str([source, destination, bwd]) + '\n')
 
-    for i in range(100):
-        # Generate a list of 5 random integers between 1 and 24 (inclusive)
-        source = random.randint(1, 24)
-        destination = random.sample(list_of_nodes - {source}, 5)
-        bwd = random.randint(1, 4)*40
-        f.write(str([source, destination, bwd]) + '\n')

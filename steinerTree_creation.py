@@ -57,7 +57,7 @@ def sTree(adjMat, request):
 
     # step-1: Select the source node as the root;
     steiner_tree[request[0]] = []
-    # [4, [5, 6]]
+    # request : [4, [5, 6]]
 
     while (len(request[1]) != 0):
         closest_path = []
@@ -80,6 +80,8 @@ def sTree(adjMat, request):
                 closest_path = path_di
                 dest_node = di
                 selected_tree_node = selected_tree_node_di
+  
+    
 
         # 1(c): Select the node d ∈ D′ having the minimum value of path length among all
         # the shortest paths estimated in Step 1(b), and select the node x of the tree to which
