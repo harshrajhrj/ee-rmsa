@@ -2,7 +2,7 @@
 
 from math import floor
 
-NUMOFSLOTS=2000
+NUMOFSLOTS=5000
 
 
 def slotsEnergyBVT(slots,dist_arr):
