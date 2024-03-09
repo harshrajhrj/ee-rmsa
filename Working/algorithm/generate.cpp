@@ -3,6 +3,11 @@
 
 using namespace std;
 
+/**
+ * @brief Populate 50 x each in {1,2,3,4,5,6} requests.
+ * 
+ * @return vector<int> 
+ */
 vector<int> NetworkRequests()
 {
     vector<int> reqs;
@@ -13,6 +18,11 @@ vector<int> NetworkRequests()
     return reqs;
 }
 
+/**
+ * @brief Populate node name in a set. Ex: 1 2 3 4 ...
+ * 
+ * @return set<int> 
+ */
 set<int> GenerateNodes()
 {
     set<int> nodes;
@@ -23,8 +33,14 @@ set<int> GenerateNodes()
     return nodes;
 }
 
-// https://www.techiedelight.com/get-random-value-stl-containers-cpp/
-// https://stackoverflow.com/questions/3052788/how-to-select-a-random-element-in-stdset
+/**
+ * @brief Generates a random node from given set.
+ * [Help 1](https://www.techiedelight.com/get-random-value-stl-containers-cpp/)
+ * [Help 2](https://stackoverflow.com/questions/3052788/how-to-select-a-random-element-in-stdset)
+ * @param nodes 
+ * @param size 
+ * @return auto 
+ */
 auto random(set<int> &nodes, size_t size)
 {
     auto it = nodes.begin();
@@ -32,6 +48,12 @@ auto random(set<int> &nodes, size_t size)
     return it;
 }
 
+/**
+ * @brief Create a Request File object
+ * 
+ * @param d_type 
+ * @param reqs 
+ */
 void CreateRequestFile(string d_type, int reqs)
 {
     int demand = 40;
@@ -91,6 +113,10 @@ void CreateRequestFile(string d_type, int reqs)
     file.close();
 }
 
+/**
+ * @brief Driver function for generating requets.
+ * 
+ */
 void RequestGenerator()
 {
     vector<string> demand = {"LSD", "MSD", "HSD", "VSD"};
