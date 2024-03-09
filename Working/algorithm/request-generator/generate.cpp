@@ -65,10 +65,10 @@ void CreateRequestFile(string d_type, int reqs)
         demand = 120;
     else
     {
-        demand = rand() % 4 + 1;
+        demand = (rand() % 4 + 1) * 40;
     }
 
-    string path = "../requests/" + to_string(reqs) + "_" + d_type + "_" + to_string(NODES) + ".txt";
+    string path = "../../requests/" + to_string(reqs) + "_" + d_type + "_" + to_string(NODES) + ".txt";
     fstream file(path, ios::out);
 
     int i = 0;

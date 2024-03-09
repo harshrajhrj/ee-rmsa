@@ -37,7 +37,7 @@ public:
     }
 };
 
-unordered_map<int, Node *> NodeControlBlock(vector<vector<int>> matrix)
+unordered_map<int, Node *> CreateNodeControlBlock(vector<vector<int>> matrix)
 {
     unordered_map<int, Node *> ControlBlock;
     int no_of_nodes = matrix.size();
