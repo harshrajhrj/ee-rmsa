@@ -13,7 +13,8 @@ void BuildTree()
 
     for (const auto &entry : fs::directory_iterator(path))
     {
-        cout << entry.path() << endl;
+        // cout << entry.path() << endl;
+        
         fstream file(entry.path(), ios::in);
         if (file)
         {
