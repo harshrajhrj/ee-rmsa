@@ -5,13 +5,13 @@ using namespace std;
 
 /**
  * @brief Populate 50 x each in {1,2,3,4,5,6} requests.
- * 
- * @return vector<int> 
+ *
+ * @return vector<int>
  */
-vector<int> NetworkRequests()
+vector<int> NetworkRequests(int scale_factor)
 {
     vector<int> reqs;
-    for (int i = 1; i <= 6; i++)
+    for (int i = 1; i <= scale_factor; i++)
     {
         reqs.push_back(50 * i);
     }
@@ -20,8 +20,8 @@ vector<int> NetworkRequests()
 
 /**
  * @brief Populate node name in a set. Ex: 1 2 3 4 ...
- * 
- * @return set<int> 
+ *
+ * @return set<int>
  */
 set<int> GenerateNodes()
 {
@@ -37,9 +37,9 @@ set<int> GenerateNodes()
  * @brief Generates a random node from given set.
  * [Help 1](https://www.techiedelight.com/get-random-value-stl-containers-cpp/)
  * [Help 2](https://stackoverflow.com/questions/3052788/how-to-select-a-random-element-in-stdset)
- * @param nodes 
- * @param size 
- * @return auto 
+ * @param nodes
+ * @param size
+ * @return auto
  */
 auto random(set<int> &nodes, size_t size)
 {
@@ -50,22 +50,22 @@ auto random(set<int> &nodes, size_t size)
 
 /**
  * @brief Create a Request File object
- * 
- * @param d_type 
- * @param reqs 
+ *
+ * @param d_type
+ * @param reqs
  */
-void CreateRequestFile(string d_type, int reqs)
+void CreateRequestFile(string d_type, int reqs, int d_scale)
 {
-    int demand = 40;
+    int demand = d_scale; // initialized to d_scale
     if (d_type == "LSD")
-        demand = 40;
+        demand = d_scale; // 40
     else if (d_type == "MSD")
-        demand = 80;
+        demand = d_scale * 2; // 80
     else if (d_type == "HSD")
-        demand = 120;
+        demand = d_scale * 3; // 120
     else
     {
-        demand = (rand() % 4 + 1) * 40;
+        demand = (rand() % 4 + 1) * d_scale; // any of 40, 80, 120 and 160
     }
 
     string path = "../../requests/" + to_string(reqs) + "_" + d_type + "_" + to_string(NODES) + ".txt";
@@ -115,18 +115,26 @@ void CreateRequestFile(string d_type, int reqs)
 
 /**
  * @brief Driver function for generating requets.
- * 
+ *
  */
 void RequestGenerator()
 {
+    int req_scale_factor;
+    cout << "Please enter the rwquest scale factor: ";
+    cin >> req_scale_factor;
+    vector<int> reqs = NetworkRequests(req_scale_factor);
+
+    int demand_scale_factor;
+    cout << "Please enter the demand scale factor: ";
+    cin >> demand_scale_factor;
+
     vector<string> demand = {"LSD", "MSD", "HSD", "VSD"};
-    vector<int> reqs = NetworkRequests();
 
     for (auto d : demand)
     {
         for (auto r : reqs)
         {
-            CreateRequestFile(d, r);
+            CreateRequestFile(d, r, demand_scale_factor);
         }
     }
 

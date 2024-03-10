@@ -26,6 +26,5 @@ unordered_map<int, Node *> GenerateAdjacencyList()
         }
     }
     unordered_map<int, Node *> ControlBlock = CreateNodeControlBlock(matrix);
-    PrintAdjacencyList(ControlBlock);
     return ControlBlock;
 }
