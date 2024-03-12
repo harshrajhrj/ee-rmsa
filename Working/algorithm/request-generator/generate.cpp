@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#define NODES 6
+#define NODES 24
 
 using namespace std;
 
@@ -86,7 +86,7 @@ void CreateRequestFile(string d_type, int reqs, int d_scale)
         }
 
         vector<int> dest;
-        for (int D = 0; D < 3; D++)
+        for (int D = 0; D < 5; D++)
         {
             auto r = rand() % nodes.size();
             auto n = random(nodes, r);
@@ -120,7 +120,7 @@ void CreateRequestFile(string d_type, int reqs, int d_scale)
 void RequestGenerator()
 {
     int req_scale_factor;
-    cout << "Please enter the rwquest scale factor: ";
+    cout << "Please enter the request scale factor: ";
     cin >> req_scale_factor;
     vector<int> reqs = NetworkRequests(req_scale_factor);
 

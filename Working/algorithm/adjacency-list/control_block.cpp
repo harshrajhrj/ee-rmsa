@@ -3,32 +3,38 @@ using namespace std;
 
 /**
  * @brief Node maintains adjacency list of each neighbour
- * 
+ *
  */
 class Node
 {
 public:
-
     /**
      * @brief Node name Ex : node "1".
-     * 
+     *
      */
     int node;
 
     /**
      * @brief List of Adjacent nodes.
-     * 
+     *
      */
     vector<pair<Node *, int>> adjNodes;
 
     /**
-     * @brief Construct a new Node object
-     * 
-     * @param n Node name. Ex : node "1" 
+     * @brief No of available regenerations
+     *
      */
-    Node(int n)
+    int regenerations;
+
+    /**
+     * @brief Construct a new Node object
+     *
+     * @param n Node name. Ex : node "1"
+     */
+    Node(int n, int regenerations)
     {
         this->node = n;
+        this->regenerations = regenerations;
     }
 
     void AssignNeighbour(Node *n, int dist)
@@ -37,23 +43,23 @@ public:
     }
 };
 
-unordered_map<int, Node *> CreateNodeControlBlock(vector<vector<int>> matrix)
+unordered_map<int, Node *> CreateNodeControlBlock(vector<vector<int>> matrix, int regenerations)
 {
     unordered_map<int, Node *> ControlBlock;
     int no_of_nodes = matrix.size();
 
     /**
      * @brief This loop creates every node block for the given network.
-     * 
+     *
      */
     for (int i = 0; i < no_of_nodes; i++)
     {
-        ControlBlock[i + 1] = new Node(i + 1);
+        ControlBlock[i + 1] = new Node(i + 1, regenerations);
     }
 
     /**
      * @brief This loop assign neighbours of each node for the given network.
-     * 
+     *
      */
     for (int i = 0; i < no_of_nodes; i++)
     {
@@ -63,7 +69,7 @@ unordered_map<int, Node *> CreateNodeControlBlock(vector<vector<int>> matrix)
             {
                 /**
                  * @brief For node "i + 1", assign neighbour "j + 1" with cost/distance.
-                 * 
+                 *
                  */
                 ControlBlock[i + 1]->AssignNeighbour(ControlBlock[j + 1], matrix[i][j]);
             }

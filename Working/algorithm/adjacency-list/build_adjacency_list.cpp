@@ -3,9 +3,9 @@
 
 using namespace std;
 
-unordered_map<int, Node *> GenerateAdjacencyList()
+unordered_map<int, Node *> GenerateAdjacencyList(int regenerations)
 {
-    ifstream network("../../network-matrix/paper_1_6_nodes.txt");
+    ifstream network("../../network-matrix/paper_24.txt");
     // int no_of_nodes = 6;
     vector<vector<int>> matrix;
     if (network.is_open())
@@ -15,16 +15,22 @@ unordered_map<int, Node *> GenerateAdjacencyList()
         {
             getline(network, my_line);
             vector<int> weights;
+            string weight = "";
             for (auto v : my_line)
             {
                 if (v != ' ' && v != '\n')
                 {
-                    weights.push_back(int(v) - 48);
+                    weight += v;
+                }
+                else
+                {
+                    weights.push_back(stoi(weight));
+                    weight = "";
                 }
             }
             matrix.push_back(weights);
         }
     }
-    unordered_map<int, Node *> ControlBlock = CreateNodeControlBlock(matrix);
+    unordered_map<int, Node *> ControlBlock = CreateNodeControlBlock(matrix, regenerations);
     return ControlBlock;
 }
