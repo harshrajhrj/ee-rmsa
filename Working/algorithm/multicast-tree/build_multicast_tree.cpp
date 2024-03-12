@@ -273,7 +273,6 @@ void MulticastTree(unordered_map<int, Node *> ControlBlock, TreeInputRequestBloc
         req.dest.erase(it);
         servedPath++;
     }
-
     cout << "Tree: " << endl;
     for (auto v : paths)
     {
@@ -294,8 +293,11 @@ void MulticastTree(unordered_map<int, Node *> ControlBlock, TreeInputRequestBloc
  */
 void BuildTree()
 {
+    int regenerations;
+    cout<<"Please enter the number of regenerations: ";
+    cin>>regenerations;
     // Step 1: Create adjacency list
-    unordered_map<int, Node *> ControlBlock = GenerateAdjacencyList();
+    unordered_map<int, Node *> ControlBlock = GenerateAdjacencyList(regenerations);
     PrintAdjacencyList(ControlBlock);
 
     // Step 2: Collect requests
