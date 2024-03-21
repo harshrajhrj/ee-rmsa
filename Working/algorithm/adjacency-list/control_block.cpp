@@ -26,6 +26,8 @@ public:
      */
     int regenerations;
 
+    
+
     /**
      * @brief Construct a new Node object
      *
