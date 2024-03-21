@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#define NODES 24
+#define NODES 11
 
 using namespace std;
 
