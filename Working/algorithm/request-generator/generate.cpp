@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#define NODES 11
+#define NODES 24
 
 using namespace std;
 
@@ -57,16 +57,10 @@ auto random(set<int> &nodes, size_t size)
 void CreateRequestFile(string d_type, int reqs, int d_scale)
 {
     int demand = d_scale; // initialized to d_scale
-    if (d_type == "LSD")
+    if (d_type == "FD40")
         demand = d_scale; // 40
-    else if (d_type == "MSD")
+    else if (d_type == "FD80")
         demand = d_scale * 2; // 80
-    else if (d_type == "HSD")
-        demand = d_scale * 3; // 120
-    else
-    {
-        demand = (rand() % 4 + 1) * d_scale; // any of 40, 80, 120 and 160
-    }
 
     string path = "../../requests/" + to_string(reqs) + "_" + d_type + "_" + to_string(NODES) + ".txt";
     fstream file(path, ios::out);
@@ -74,6 +68,10 @@ void CreateRequestFile(string d_type, int reqs, int d_scale)
     int i = 0;
     while (i < reqs)
     {
+        // if variable demand then the demand falls in the range [40, 80, 120, 160]
+        if (d_type == "VD")
+            demand = (rand() % 4 + 1) * d_scale;
+        
         set<int> nodes = GenerateNodes();
         int source = rand() % 6 + 1;
         for (auto it = nodes.begin(); it != nodes.end(); it++)
@@ -128,7 +126,7 @@ void RequestGenerator()
     cout << "Please enter the demand scale factor: ";
     cin >> demand_scale_factor;
 
-    vector<string> demand = {"LSD", "MSD", "HSD", "VSD"};
+    vector<string> demand = {"FD40", "FD80", "VD"};
 
     for (auto d : demand)
     {
