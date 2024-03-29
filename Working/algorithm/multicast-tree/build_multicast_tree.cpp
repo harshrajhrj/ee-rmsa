@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 #include <filesystem>
 namespace fs = std::filesystem;
-#include "../adjacency-list/build_adjacency_list.cpp"
+#include "../node-related/build_adjacency_list.cpp"
 
 using namespace std;
 
@@ -294,8 +294,8 @@ void MulticastTree(unordered_map<int, Node *> ControlBlock, TreeInputRequestBloc
 void BuildTree()
 {
     int regenerations;
-    cout<<"Please enter the number of regenerations: ";
-    cin>>regenerations;
+    cout << "Please enter the number of regenerations: ";
+    cin >> regenerations;
     // Step 1: Create adjacency list
     unordered_map<int, Node *> ControlBlock = GenerateAdjacencyList(regenerations);
     PrintAdjacencyList(ControlBlock);
