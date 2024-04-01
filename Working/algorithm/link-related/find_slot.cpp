@@ -1,13 +1,25 @@
-#include <bits/stdc++.h>
-using namespace std;
+#define BW 12.5
 
-void FindSlots()
+/**
+ * @brief Function to find required frequency slots in a link
+ *
+ * @param demand in Gbps
+ * @param distance in KM
+ * @return int freq_slots
+ */
+int FindSlots(int demand, int distance)
 {
-    vector<int> v{4, 5, 6, 6, 444};
+    int SE = 1;
+    if (distance <= 500)
+        SE = 4;
+    else if (distance <= 1000)
+        SE = 3;
+    else if (distance <= 2000)
+        SE = 2;
+    else
+        SE = 1;
 
-    cout << *max_element(v.begin(), v.end());
-}
+    int freq_slots = ceil(demand / (BW * SE));
 
-int main() {
-    FindSlots();
+    return freq_slots;
 }

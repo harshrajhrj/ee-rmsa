@@ -1,9 +1,9 @@
 #include <bits/stdc++.h>
-#include "control_block.cpp"
+#include "node_block.cpp"
 
 using namespace std;
 
-unordered_map<int, Node *> GenerateAdjacencyList(int regenerations)
+unordered_map<int, NodeBlock *> GenerateAdjacencyList(int regenerations)
 {
     ifstream network("../../network-matrix/paper_24.txt");
     // int no_of_nodes = 6;
@@ -31,6 +31,20 @@ unordered_map<int, Node *> GenerateAdjacencyList(int regenerations)
             matrix.push_back(weights);
         }
     }
-    unordered_map<int, Node *> ControlBlock = CreateNodeControlBlock(matrix, regenerations);
+    unordered_map<int, NodeBlock *> ControlBlock = CreateNodeControlBlock(matrix, regenerations);
+    // PrintAdjacencyList(ControlBlock);
     return ControlBlock;
+}
+
+void PrintAdjacencyList(unordered_map<int, NodeBlock *> ControlBlock)
+{
+    for (auto [key, value] : ControlBlock)
+    {
+        cout << "Node: " << key << " Adjacent Nodes: ";
+        for (auto v : value->adjNodes)
+        {
+            cout << "(" << v.first->node << "," << v.second << ") ";
+        }
+        cout << endl;
+    }
 }

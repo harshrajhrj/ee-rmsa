@@ -1,7 +1,6 @@
 #include <bits/stdc++.h>
-#include <filesystem>
-namespace fs = std::filesystem;
 #include "../node-related/build_adjacency_list.cpp"
+#include "../request-collector/collect.cpp"
 
 using namespace std;
 
@@ -9,144 +8,17 @@ using namespace std;
  * @brief Pair of {dist, Node}
  *
  */
-typedef pair<int, Node *> distNode;
+typedef pair<int, NodeBlock *> distNode;
 /**
  * @brief Pair of {dist, {Node*, {Node *, []Node*}
  *
  */
-typedef pair<int, pair<Node *, pair<Node *, vector<distNode>>>> distSrcDestNodesPair;
+typedef pair<int, pair<NodeBlock *, pair<NodeBlock *, vector<distNode>>>> distSrcDestNodesPair;
 /**
  * @brief Pair of {dist, dist} or {Node, Node}
  *
  */
 typedef pair<int, int> dist_node_pair;
-
-/**
- * @brief TreeInputRequestBlock class handles request inputs.
- *
- */
-class TreeInputRequestBlock
-{
-public:
-    /**
-     * @brief Source
-     *
-     */
-    int src;
-    /**
-     * @brief Set of destinations
-     *
-     */
-    vector<int> dest;
-    /**
-     * @brief Request demand (bandwidth in Gbps)
-     *
-     */
-    int demand;
-
-    /**
-     * @brief Construct a new Tree Input Request Block object
-     *
-     * @param req_literal
-     */
-    TreeInputRequestBlock(string req_literal)
-    {
-        // <--- InputHandlers --->
-
-        string token = "";
-        bool src_check = true;
-        bool dest_check = false;
-
-        for (auto v : req_literal)
-        {
-            if (v == '[')
-            {
-                this->src = stoi(token);
-                token = "";
-                dest_check = true;
-                src_check = false;
-            }
-            else if (v == ']')
-            {
-                this->dest.push_back(stoi(token));
-                token = "";
-                dest_check = false;
-            }
-            else if (src_check)
-            {
-                token += v;
-            }
-            else if (dest_check)
-            {
-                if (v != ',')
-                {
-                    token += v;
-                }
-                else
-                {
-                    this->dest.push_back(stoi(token));
-                    token = "";
-                }
-            }
-            else
-            {
-                token += v;
-            }
-        }
-        this->demand = stoi(token);
-        token = "";
-    }
-};
-
-/**
- * @brief Collect requests from a given directory
- *
- * @return vector<TreeInputRequestBlock>
- */
-vector<TreeInputRequestBlock> CollectRequests()
-{
-    string path = "../../requests";
-    vector<TreeInputRequestBlock> requests;
-
-    /**
-     * @brief Construct a new for object. Collect files from a directory
-     *
-     * @param fs::directory_iterator
-     */
-    for (const auto &entry : fs::directory_iterator(path))
-    {
-
-        fstream file(entry.path(), ios::in);
-        if (file)
-        {
-            string new_line;
-            while (!file.eof())
-            {
-                getline(file, new_line);
-                if (!new_line.size())
-                    continue;
-
-                // <--- Start: inputs to the steiner tree --->
-
-                TreeInputRequestBlock req_block(new_line);
-
-                // <--- Start: inputs to the steiner tree --->
-
-                // <--- Start: Debugging purpose --->
-                // cout << new_line << " Source: " << req_block.src << " Destinations: ";
-                // for (auto v : req_block.dest)
-                // {
-                //     cout << v << " ";
-                // }
-                // cout << "Demand: " << req_block.demand << endl;
-                // <--- End: Debugging purpose --->
-                requests.push_back(req_block);
-            }
-        }
-        file.close();
-    }
-    return requests;
-}
 
 /**
  * @brief Finds SSSP for a given node.
@@ -157,7 +29,7 @@ vector<TreeInputRequestBlock> CollectRequests()
  * @param treeNodes Nodes that are added to Steiner tree
  * @return pair<int, pair<Node *, pair<Node *, vector<distNode>>>>
  */
-distSrcDestNodesPair DijkstraAlgo(Node *src, vector<int> dest, unordered_map<int, Node *> ControlBlock, vector<Node *> treeNodes)
+distSrcDestNodesPair DijkstraAlgo(NodeBlock *src, vector<int> dest, unordered_map<int, NodeBlock *> ControlBlock, vector<NodeBlock *> treeNodes)
 {
     priority_queue<distNode, vector<distNode>, greater<distNode>> keepDestinations;
     vector<int> destinations(ControlBlock.size(), INT_MAX);
@@ -168,7 +40,7 @@ distSrcDestNodesPair DijkstraAlgo(Node *src, vector<int> dest, unordered_map<int
 
     while (!keepDestinations.empty())
     {
-        Node *u = keepDestinations.top().second;
+        NodeBlock *u = keepDestinations.top().second;
         keepDestinations.pop();
 
         for (auto v : u->adjNodes)
@@ -214,9 +86,9 @@ distSrcDestNodesPair DijkstraAlgo(Node *src, vector<int> dest, unordered_map<int
  * @param ControlBlock
  * @param req
  */
-void MulticastTree(unordered_map<int, Node *> ControlBlock, TreeInputRequestBlock req)
+void MulticastTree(unordered_map<int, NodeBlock *> ControlBlock, TreeInputRequestBlock req)
 {
-    vector<Node *> treeNodes;
+    vector<NodeBlock *> treeNodes;
     vector<stack<dist_node_pair>> paths(req.dest.size());
     int servedPath = 0;
 
@@ -297,7 +169,7 @@ void BuildTree()
     cout << "Please enter the number of regenerations: ";
     cin >> regenerations;
     // Step 1: Create adjacency list
-    unordered_map<int, Node *> ControlBlock = GenerateAdjacencyList(regenerations);
+    unordered_map<int, NodeBlock *> ControlBlock = GenerateAdjacencyList(regenerations);
     PrintAdjacencyList(ControlBlock);
 
     // Step 2: Collect requests
