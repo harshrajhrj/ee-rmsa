@@ -39,7 +39,7 @@ set<int> GenerateNodes()
  * [Help 2](https://stackoverflow.com/questions/3052788/how-to-select-a-random-element-in-stdset)
  * @param nodes
  * @param size
- * @return auto
+ * @return auto [Iterator]
  */
 auto random(set<int> &nodes, size_t size)
 {

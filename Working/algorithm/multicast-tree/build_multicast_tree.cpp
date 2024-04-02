@@ -31,11 +31,31 @@ typedef pair<int, int> dist_node_pair;
  */
 distSrcDestNodesPair DijkstraAlgo(NodeBlock *src, vector<int> dest, unordered_map<int, NodeBlock *> ControlBlock, vector<NodeBlock *> treeNodes)
 {
+
+    /**
+     * @brief Min heap for `pair<int, Node>`
+     * @example {0, 4}, {1200, 2}, {1240, 1}
+     *
+     */
     priority_queue<distNode, vector<distNode>, greater<distNode>> keepDestinations;
+    /**
+     * @brief Stores distance from `source` node to `every` node.
+     *
+     */
     vector<int> destinations(ControlBlock.size(), INT_MAX);
+    /**
+     * @brief Stores parent of every node.
+     *
+     */
     vector<distNode> parents(ControlBlock.size());
+
+    // assign distance to source node itself as "0"
     destinations[src->node - 1] = 0;
+
+    // initially source node in pq
     keepDestinations.push({0, src});
+
+    // no parent of source node
     parents[src->node - 1] = {0, nullptr};
 
     while (!keepDestinations.empty())
@@ -54,10 +74,12 @@ distSrcDestNodesPair DijkstraAlgo(NodeBlock *src, vector<int> dest, unordered_ma
         }
     }
 
+    // choose shortest destination from source node and which is not a part of steiner tree
     distNode shortestDestination = {INT_MAX, nullptr};
 
     for (auto v : dest)
     {
+        // destination which is not part of steiner tree
         if (find(treeNodes.begin(), treeNodes.end(), ControlBlock[v]) == treeNodes.end())
         {
             if (destinations[v - 1] < shortestDestination.first)
@@ -69,15 +91,18 @@ distSrcDestNodesPair DijkstraAlgo(NodeBlock *src, vector<int> dest, unordered_ma
 
     // Store path from source to destination i.e. src, internmediate and destination nodes.
     vector<distNode> path;
-    path.push_back(parents[shortestDestination.second->node - 1]);
+    vector<pair<int, pair<int, int>>> paths;
+    paths.push_back({parents[shortestDestination.second->node - 1].second->node - 1, {shortestDestination.second->node, shortestDestination.first}});
+    // path.push_back(parents[shortestDestination.second->node - 1]);
     distNode temp = parents[shortestDestination.second->node - 1];
     while (temp.second != src)
     {
-        path.push_back(parents[temp.second->node - 1]);
+        paths.push_back({parents[temp.second->node - 1].second->node - 1, {temp.second->node, temp.first}});
+        // path.push_back(parents[temp.second->node - 1]);
         temp = parents[temp.second->node - 1];
     }
 
-    return {shortestDestination.first, {src, {shortestDestination.second, path}}};
+    return {shortestDestination.first, {src, {shortestDestination.second, path}}}; // to be changed here
 }
 
 /**
@@ -151,7 +176,7 @@ void MulticastTree(unordered_map<int, NodeBlock *> ControlBlock, TreeInputReques
         cout << "(";
         while (!v.empty())
         {
-            cout << v.top().second;
+            cout << v.top().second << " - " << v.top().first;
             v.size() > 1 ? cout << " -> " : cout << "";
             v.pop();
         }
