@@ -1,7 +1,11 @@
-#include <bits/stdc++.h>
 #include <filesystem>
-namespace fs = std::filesystem;
+#include <fstream>
+#include <string>
+#include <algorithm>
+#include <vector>
+#include <iostream>
 #include "request_class.cpp"
+namespace fs = std::filesystem;
 
 /**
  * @brief Collect requests from a given directory

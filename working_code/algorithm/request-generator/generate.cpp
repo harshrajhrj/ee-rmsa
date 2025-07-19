@@ -1,4 +1,13 @@
-#include <bits/stdc++.h>
+// #include <bits/stdc++.h>
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <vector>
+#include <set>
+#include <sstream>
+#include <iterator>
+#include <algorithm>
+
 #define NODES 24
 
 using namespace std;
